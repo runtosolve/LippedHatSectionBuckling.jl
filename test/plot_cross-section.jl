@@ -11,7 +11,7 @@ D = 0.276
 L = 0.551
 
 B = 2.01
-H = 1.54 - t*2
+H = 1.54 + t*2
 r = 0.0790
 
 
@@ -31,3 +31,24 @@ properties = SectionProperties.open_thin_walled(cs, t * ones(Float64, length(cs)
 properties.A
 properties.Ixx
 properties.Iyy
+
+
+Lcrd = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "P")
+
+
+
+coordinates = LippedHatSectionBuckling.get_section_coordinates(dimensions)
+
+
+function export_coordinates_csv(coordinates, filename)
+
+    open(filename, "w") do f
+        println(f, "node,x,y")
+        for i in eachindex(coordinates.X)
+            println(f, i, ",", coordinates.X[i], ",", coordinates.Y[i])
+        end
+    end
+
+end
+
+export_coordinates_csv(coordinates, "coordinates.csv")

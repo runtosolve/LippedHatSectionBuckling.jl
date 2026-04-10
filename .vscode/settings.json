@@ -1,3 +1,4 @@
 {
-    "julia.environmentPath": "c:\\RunToSolve\\Projects\\GitHub\\LippedHatSectionBuckling.jl\\test"
+    "julia.environmentPath": "c:\\RunToSolve\\Projects\\GitHub\\LippedHatSectionBuckling.jl\\test",
+    "claudeCode.useTerminal": false
 }

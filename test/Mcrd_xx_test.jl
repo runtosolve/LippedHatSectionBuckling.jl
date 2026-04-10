@@ -15,4 +15,7 @@ r = t
 material = LippedHatSectionBuckling.Material(E, ν)
 dimensions = LippedHatSectionBuckling.Dimensions(t, H, B, L, D, r)
 
-output = LippedHatSectionBuckling.calculate_Mcrd_xx(dimensions, material)
+Mcrd = LippedHatSectionBuckling.calculate_Mcrd_xx(dimensions, material)
+
+
+
