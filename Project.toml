@@ -1,3 +1,6 @@
+name = "LippedHatSectionBuckling"
+uuid = "f5d535a1-33c4-4f20-8fc6-c3a163c4ac35"
+
 [deps]
 AISIS100 = "01f7396e-a581-4110-84fa-e8964400bef8"
 CUFSM = "82b4978f-06ae-48e0-88e8-a26b4f7a0fa1"
