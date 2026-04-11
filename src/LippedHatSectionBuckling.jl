@@ -131,6 +131,7 @@ Container bundling all inputs and outputs for a single buckling calculation.
 - `label`      — string identifier for the buckling mode (e.g. `"Pcrℓ"`, `"Mcrd_xx"`)
 - `material`   — `Material` object
 - `dimensions` — `Dimensions` object
+- `lengths`    — vector of half-wavelengths evaluated (in)
 - `load`       — `Load` object used in the analysis
 - `results`    — `Results` object with `Lcr` and `Rcr`
 """
@@ -139,6 +140,7 @@ struct Section
     label
     material
     dimensions
+    lengths
     load
     results
 
@@ -1415,7 +1417,7 @@ function calculate_Pcrℓ_cFSM(dimensions, material, lengths; n_per_segment::Int
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1439,7 +1441,7 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
 
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min = min(B, H) / 2
+    L_min = Lcrd_estimate / 2
     L_max = 2.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
@@ -1472,7 +1474,7 @@ function calculate_Pcrd_cFSM(dimensions, material, lengths; n_per_segment::Int=4
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1530,7 +1532,7 @@ function calculate_Mcrℓ_xx_cFSM(dimensions, material, lengths; n_per_segment::
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1552,7 +1554,7 @@ function calculate_Mcrd_xx_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
+    L_min   = Lcrd_estimate / 2
     L_max   = 2.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
@@ -1585,7 +1587,7 @@ function calculate_Mcrd_xx_cFSM(dimensions, material, lengths; n_per_segment::In
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1644,7 +1646,7 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material, lengths; n_per_segme
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1667,7 +1669,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
+    L_min   = Lcrd_estimate / 2
     L_max   = 2.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
@@ -1700,7 +1702,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material, lengths; n_per_segment
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1758,7 +1760,7 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segme
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1777,13 +1779,11 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     label = "Mcrd_yy_pos_cFSM"
     load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
-    B = dimensions.B
-    H = dimensions.H
 
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
+    L_min   = Lcrd_estimate / 2
     L_max   = 2.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
@@ -1816,7 +1816,7 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1874,7 +1874,7 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
         return nothing
     end
 
-    return Section(label, material, dimensions, load, results)
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
