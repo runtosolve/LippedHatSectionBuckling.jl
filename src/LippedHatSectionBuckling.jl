@@ -1369,7 +1369,6 @@ end
 
 Compute the local buckling load factor under uniform axial compression (`P = 1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
-The search length range mirrors `calculate_Pcrℓ`.
 Returns a `Section` with `label = "Pcrℓ_cFSM"`.
 """
 function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
@@ -1428,7 +1427,6 @@ end
 
 Compute the distortional buckling load factor under uniform axial compression (`P = 1`)
 using constrained FSM (cFSM), isolating the distortional (D) mode.
-The search length range mirrors `calculate_Pcrd`.
 Returns a `Section` with `label = "Pcrd_cFSM"`.
 """
 function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
@@ -1480,17 +1478,16 @@ end
 
 
 """
-    calculate_Mcrℓ_xx_cFSM(dimensions, material; n_per_segment=4) -> Section
-    calculate_Mcrℓ_xx_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
+    calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment=4) -> Section
+    calculate_Mcrℓ_xx_pos_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
 
 Compute the local buckling moment factor for strong-axis bending (`Mxx = 1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
-The search length range mirrors `calculate_Mcrℓ_xx`.
-Returns a `Section` with `label = "Mcrℓ_xx_cFSM"`.
+Returns a `Section` with `label = "Mcrℓ_xx_pos_cFSM"`.
 """
-function calculate_Mcrℓ_xx_cFSM(dimensions, material; n_per_segment::Int=4)
+function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
 
-    label = "Mcrℓ_xx_cFSM"
+    label = "Mcrℓ_xx_pos_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
     B = dimensions.B
@@ -1498,10 +1495,10 @@ function calculate_Mcrℓ_xx_cFSM(dimensions, material; n_per_segment::Int=4)
 
     Lcrl_estimate = B > H ? B : H
 
-    # ---- logarithmically-spaced lengths around the expected Lcrl --------------
-    L_min   = min(B, H) / 2
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = Lcrl_estimate / 2
     L_max   = 2.0 * Lcrl_estimate
-    lengths = exp.(range(log(L_min), log(L_max); length=50))
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
@@ -1516,9 +1513,9 @@ function calculate_Mcrℓ_xx_cFSM(dimensions, material; n_per_segment::Int=4)
 
 end
 
-function calculate_Mcrℓ_xx_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
+function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
 
-    label = "Mcrℓ_xx_cFSM"
+    label = "Mcrℓ_xx_pos_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
     L_min   = minimum(lengths)
@@ -1538,17 +1535,16 @@ end
 
 
 """
-    calculate_Mcrd_xx_cFSM(dimensions, material; n_per_segment=4) -> Section
-    calculate_Mcrd_xx_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
+    calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment=4) -> Section
+    calculate_Mcrd_xx_pos_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
 
 Compute the distortional buckling moment factor for strong-axis bending (`Mxx = 1`)
 using constrained FSM (cFSM), isolating the distortional (D) mode.
-The search length mirrors `calculate_Mcrd_xx` (single AISIS100 Lcrd estimate).
-Returns a `Section` with `label = "Mcrd_xx_cFSM"`.
+Returns a `Section` with `label = "Mcrd_xx_pos_cFSM"`.
 """
-function calculate_Mcrd_xx_cFSM(dimensions, material; n_per_segment::Int=4)
+function calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
 
-    label = "Mcrd_xx_cFSM"
+    label = "Mcrd_xx_pos_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
@@ -1571,9 +1567,9 @@ function calculate_Mcrd_xx_cFSM(dimensions, material; n_per_segment::Int=4)
 
 end
 
-function calculate_Mcrd_xx_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
+function calculate_Mcrd_xx_pos_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
 
-    label = "Mcrd_xx_cFSM"
+    label = "Mcrd_xx_pos_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
     L_min   = minimum(lengths)
@@ -1598,8 +1594,6 @@ end
 
 Compute the local buckling moment factor for negative strong-axis bending (`Mxx = -1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
-Negative Mxx compresses the lip/flange assembly (bottom of the hat section).
-The search length range mirrors `calculate_Mcrℓ_xx`.
 Returns a `Section` with `label = "Mcrℓ_xx_neg_cFSM"`.
 """
 function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
@@ -1610,11 +1604,11 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     B = dimensions.B
     H = dimensions.H
 
-    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+    Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrl_estimate / 2
+    L_max   = 2.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1657,8 +1651,6 @@ end
 
 Compute the distortional buckling moment factor for negative strong-axis bending (`Mxx = -1`)
 using constrained FSM (cFSM), isolating the distortional (D) mode.
-Negative Mxx compresses the lip/flange assembly (bottom of the hat section).
-The search length mirrors `calculate_Mcrd_xx` (single AISIS100 Lcrd estimate).
 Returns a `Section` with `label = "Mcrd_xx_neg_cFSM"`.
 """
 function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
@@ -1713,22 +1705,21 @@ end
 
 Compute the local buckling moment factor for positive weak-axis bending (`Mzz = -1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
-The search length range mirrors `calculate_Mcrℓ_yy_pos`.
 Returns a `Section` with `label = "Mcrℓ_yy_pos_cFSM"`.
 """
 function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
 
     label = "Mcrℓ_yy_pos_cFSM"
-    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
 
     B = dimensions.B
     H = dimensions.H
 
-    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+    Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrl_estimate / 2
+    L_max   = 2.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1747,7 +1738,7 @@ end
 function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
 
     label = "Mcrℓ_yy_pos_cFSM"
-    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
 
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
@@ -1771,13 +1762,12 @@ end
 
 Compute the distortional buckling moment factor for positive weak-axis bending (`Mzz = -1`)
 using constrained FSM (cFSM), isolating the distortional (D) mode.
-The search length range mirrors `calculate_Mcrd_yy_pos`.
 Returns a `Section` with `label = "Mcrd_yy_pos_cFSM"`.
 """
 function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
 
     label = "Mcrd_yy_pos_cFSM"
-    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
 
 
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
@@ -1803,7 +1793,7 @@ end
 function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
 
     label = "Mcrd_yy_pos_cFSM"
-    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
 
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
@@ -1827,22 +1817,21 @@ end
 
 Compute the local buckling moment factor for negative weak-axis bending (`Mzz = +1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
-The search length range mirrors `calculate_Mcrℓ_yy_neg`.
 Returns a `Section` with `label = "Mcrℓ_yy_neg_cFSM"`.
 """
 function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
 
     label = "Mcrℓ_yy_neg_cFSM"
-    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
     B = dimensions.B
     H = dimensions.H
 
-    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+    Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = min(B, H) / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrl_estimate / 2
+    L_max   = 2.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1861,7 +1850,7 @@ end
 function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
 
     label = "Mcrℓ_yy_neg_cFSM"
-    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
@@ -1877,6 +1866,62 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
     return Section(label, material, dimensions, lengths, load, results)
 
 end
+
+
+"""
+    calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment=4) -> Section
+    calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
+
+Compute the distortional buckling moment factor for negative weak-axis bending (`Mzz = -1`)
+using constrained FSM (cFSM), isolating the distortional (D) mode.
+Returns a `Section` with `label = "Mcrd_yy_neg_cFSM"`.
+"""
+function calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrd_yy_neg_cFSM"
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+
+
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = Lcrd_estimate / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
+
+    sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
+    results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
+
+end
+
+function calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment::Int=4)
+
+    label = "Mcrd_yy_neg_cFSM"
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
+    sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
+    results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
+
+end
+
 
 
 end # module LippedHatSectionBuckling
