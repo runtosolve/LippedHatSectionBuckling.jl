@@ -26,7 +26,7 @@ cfsm_section = LippedHatSectionBuckling.get_cFSM_section(
 # ---- AISIS100 estimate for Lcrd (used only to set the length scan range) --
 Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "P")
 println("AISIS100 Lcrd estimate = ", round(Lcrd_estimate; digits=3), " in")
-hi
+
 
 # ---- logarithmically-spaced lengths around the expected Lcrd --------------
 L_min = min(B, H) / 2

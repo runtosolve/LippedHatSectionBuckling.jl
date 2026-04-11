@@ -1378,17 +1378,24 @@ function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
     B = dimensions.B
     H = dimensions.H
 
-    if B > H
-        lengths = range(0.5 * B, 1.5 * B, 9)
-    else
-        lengths = range(0.5 * H, 1.5 * H, 9)
-    end
+    # ---- local buckling half-wavelength estimate (dominant plate dimension) ---
+    Lcrl_estimate = B > H ? B : H
+
+    # ---- logarithmically-spaced lengths around the expected Lcrl --------------
+    L_min = min(B, H) / 2
+    L_max = 2.0 * Lcrl_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1397,9 +1404,16 @@ function calculate_Pcrℓ_cFSM(dimensions, material, lengths; n_per_segment::Int
     label = "Pcrℓ_cFSM"
     load  = Load(1.0, 0.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1420,14 +1434,25 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
     label = "Pcrd_cFSM"
     load  = Load(1.0, 0.0, 0.0, 0.0, 0.0)
 
-    Lcrd    = calculate_Lcrd(dimensions, material, "P")
-    lengths = range(1 * Lcrd, 2 * Lcrd, 9)
+    # ---- AISIS100 estimate for Lcrd (used only to set the length scan range) --
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "P")
+
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min = min(B, H) / 2
+    L_max = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1436,9 +1461,16 @@ function calculate_Pcrd_cFSM(dimensions, material, lengths; n_per_segment::Int=4
     label = "Pcrd_cFSM"
     load  = Load(1.0, 0.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1462,17 +1494,23 @@ function calculate_Mcrℓ_xx_cFSM(dimensions, material; n_per_segment::Int=4)
     B = dimensions.B
     H = dimensions.H
 
-    if B > H / 2
-        lengths = range(0.5 * B, 1.5 * B, 9)
-    else
-        lengths = range(0.25 * H, 1.25 * H, 9)
-    end
+    Lcrl_estimate = B > H ? B : H
+
+    # ---- logarithmically-spaced lengths around the expected Lcrl --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrl_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=50))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1481,9 +1519,16 @@ function calculate_Mcrℓ_xx_cFSM(dimensions, material, lengths; n_per_segment::
     label = "Mcrℓ_xx_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1504,14 +1549,23 @@ function calculate_Mcrd_xx_cFSM(dimensions, material; n_per_segment::Int=4)
     label = "Mcrd_xx_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
-    Lcrd    = calculate_Lcrd(dimensions, material, "M")
-    lengths = [Lcrd]
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1520,9 +1574,16 @@ function calculate_Mcrd_xx_cFSM(dimensions, material, lengths; n_per_segment::In
     label = "Mcrd_xx_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1547,17 +1608,23 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     B = dimensions.B
     H = dimensions.H
 
-    if B > H / 2
-        lengths = range(0.5 * B, 1.5 * B, 9)
-    else
-        lengths = range(0.25 * H, 1.25 * H, 9)
-    end
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1566,9 +1633,16 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material, lengths; n_per_segme
     label = "Mcrℓ_xx_neg_cFSM"
     load  = Load(0.0, -1.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1590,14 +1664,23 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     label = "Mcrd_xx_neg_cFSM"
     load  = Load(0.0, -1.0, 0.0, 0.0, 0.0)
 
-    Lcrd    = calculate_Lcrd(dimensions, material, "M")
-    lengths = [Lcrd]
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1606,9 +1689,16 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material, lengths; n_per_segment
     label = "Mcrd_xx_neg_cFSM"
     load  = Load(0.0, -1.0, 0.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1630,14 +1720,25 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4
     load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
     B = dimensions.B
-    L = dimensions.L
-    lengths = range(L, 1.2 * B, 9)
+    H = dimensions.H
+
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1646,9 +1747,16 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segme
     label = "Mcrℓ_yy_pos_cFSM"
     load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1669,14 +1777,26 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     label = "Mcrd_yy_pos_cFSM"
     load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
-    Lcrd    = calculate_Lcrd(dimensions, material, "M")
-    lengths = range(1 * Lcrd, 2 * Lcrd, 9)
+    B = dimensions.B
+    H = dimensions.H
+
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1685,9 +1805,16 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment
     label = "Mcrd_yy_pos_cFSM"
     load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
@@ -1710,13 +1837,24 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4
 
     B = dimensions.B
     H = dimensions.H
-    lengths = range(0.5 * maximum([B, H]), 2.0 * maximum([B, H]), 7)
+
+    Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
+
+    # ---- logarithmically-spaced lengths around the expected Lcrd --------------
+    L_min   = min(B, H) / 2
+    L_max   = 2.0 * Lcrd_estimate
+    lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
 
-    return Section(label, material, dimensions, load, results)
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
+
+    return Section(label, material, dimensions, lengths, load, results)
 
 end
 
@@ -1725,9 +1863,16 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
     label = "Mcrℓ_yy_neg_cFSM"
     load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
 
+    L_min   = minimum(lengths)
+    L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
     result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     results = Results(result, result.Lcr, result.Rcr)
+
+    if !(L_min < result.Lcr < L_max)
+        println("Lcr is out of the range")
+        return nothing
+    end
 
     return Section(label, material, dimensions, load, results)
 
