@@ -1103,7 +1103,7 @@ end
 
 
 """
-    effective_width_lip_stiffened(w_L, w_D_flat, D_nom, t, f, E, ν) -> NamedTuple
+    effective_width_partially_stiffened(w_L, w_D_flat, D_nom, t, f, E, ν) -> NamedTuple
 
 Effective width of a uniformly compressed element with a **simple lip edge stiffener**
 per AISI S100 Section 1.3.
@@ -1703,7 +1703,7 @@ end
     calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment=4) -> Section
     calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
 
-Compute the local buckling moment factor for positive weak-axis bending (`Mzz = -1`)
+Compute the local buckling moment factor for positive weak-axis bending (`Mzz = +1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
 Returns a `Section` with `label = "Mcrℓ_yy_pos_cFSM"`.
 """
@@ -1760,7 +1760,7 @@ end
     calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment=4) -> Section
     calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
 
-Compute the distortional buckling moment factor for positive weak-axis bending (`Mzz = -1`)
+Compute the distortional buckling moment factor for positive weak-axis bending (`Mzz = +1`)
 using constrained FSM (cFSM), isolating the distortional (D) mode.
 Returns a `Section` with `label = "Mcrd_yy_pos_cFSM"`.
 """
@@ -1815,7 +1815,7 @@ end
     calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment=4) -> Section
     calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segment=4) -> Section
 
-Compute the local buckling moment factor for negative weak-axis bending (`Mzz = +1`)
+Compute the local buckling moment factor for negative weak-axis bending (`Mzz = -1`)
 using constrained FSM (cFSM), isolating the local (L) mode.
 Returns a `Section` with `label = "Mcrℓ_yy_neg_cFSM"`.
 """
