@@ -1383,8 +1383,8 @@ function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrl --------------
-    L_min = min(B, H) / 2
-    L_max = 2.0 * Lcrl_estimate
+    L_min = Lcrl_estimate / 3
+    L_max = 3.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1439,8 +1439,8 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
 
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min = Lcrd_estimate / 2
-    L_max = 2.0 * Lcrd_estimate
+    L_min = Lcrd_estimate
+    L_max = 3.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1496,8 +1496,8 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4
     Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrl_estimate / 2
-    L_max   = 2.0 * Lcrl_estimate
+    L_min   = Lcrl_estimate / 3
+    L_max   = 3.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1550,8 +1550,8 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrd_estimate / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrd_estimate
+    L_max   = 3.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1607,8 +1607,8 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrl_estimate / 2
-    L_max   = 2.0 * Lcrl_estimate
+    L_min   = Lcrl_estimate / 3
+    L_max   = 3.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1661,8 +1661,8 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrd_estimate / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrd_estimate
+    L_max   = 3.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1718,8 +1718,8 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4
     Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrl_estimate / 2
-    L_max   = 2.0 * Lcrl_estimate
+    L_min   = Lcrl_estimate / 3
+    L_max   = 3.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1773,8 +1773,8 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrd_estimate / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrd_estimate
+    L_max   = 3.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1830,8 +1830,8 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4
     Lcrl_estimate = B > H ? B : H
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrl_estimate / 2
-    L_max   = 2.0 * Lcrl_estimate
+    L_min   = Lcrl_estimate / 3
+    L_max   = 3.0 * Lcrl_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
@@ -1885,8 +1885,8 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcrd_estimate = LippedHatSectionBuckling.calculate_Lcrd(dimensions, material, "M")
 
     # ---- logarithmically-spaced lengths around the expected Lcrd --------------
-    L_min   = Lcrd_estimate / 2
-    L_max   = 2.0 * Lcrd_estimate
+    L_min   = Lcrd_estimate
+    L_max   = 3.0 * Lcrd_estimate
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
