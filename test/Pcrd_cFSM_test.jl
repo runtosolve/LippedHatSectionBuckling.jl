@@ -34,9 +34,12 @@ L_max = 2.0 * Lcrd_estimate
 lengths = exp.(range(log(L_min), log(L_max); length=60))
 
 # ---- constrained FSM distortional-only signature curve --------------------
-result = cFSM.cfsm_analysis(cfsm_section.node, cfsm_section.elem, cfsm_section.prop, lengths, modes = ["D"], BC = "S-S")
+result = cFSM.cfsm_analysis(cfsm_section.node, cfsm_section.elem, cfsm_section.prop, lengths, 1, ["D"]; BC = "S-S")
+Rcr_per_length = [minimum(result.curve[l][:, 2]) for l in eachindex(result.curve)]
+Lcrd = result.lengths[argmin(Rcr_per_length)]
+Rcrd = minimum(Rcr_per_length)
 
-println("cFSM  Lcrd = ", round(result.Lcr; digits=3), " in")
-println("cFSM  Rcrd = ", round(result.Rcr; digits=4), "  (load factor, P=1 reference)")
+println("cFSM  Lcrd = ", round(Lcrd; digits=3), " in")
+println("cFSM  Rcrd = ", round(Rcrd; digits=4), "  (load factor, P=1 reference)")
 
 

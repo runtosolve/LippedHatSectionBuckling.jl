@@ -36,7 +36,8 @@ cfsm_section = LippedHatSectionBuckling.get_cFSM_section(
 
 result_cfsm = cFSM.cfsm_analysis(
     cfsm_section.node, cfsm_section.elem, cfsm_section.prop,
-    lengths; modes=["D"], BC="S-S"
+    lengths, 1, ["D"]; BC="S-S"
 )
-Lcrd_cfsm = result_cfsm.Lcr
-Rcrd_cfsm = result_cfsm.Rcr
+Rcr_per_length = [minimum(result_cfsm.curve[l][:, 2]) for l in eachindex(result_cfsm.curve)]
+Lcrd_cfsm = result_cfsm.lengths[argmin(Rcr_per_length)]
+Rcrd_cfsm = minimum(Rcr_per_length)

@@ -33,7 +33,10 @@ L_max = 4.0 * Lcrl_estimate
 lengths = exp.(range(log(L_min), log(L_max); length=60))
 
 # ---- constrained FSM local-only signature curve ---------------------------
-result = cFSM.cfsm_analysis(cfsm_section.node, cfsm_section.elem, cfsm_section.prop, lengths, modes = ["L"], BC = "S-S")
+result = cFSM.cfsm_analysis(cfsm_section.node, cfsm_section.elem, cfsm_section.prop, lengths, 1, ["L"]; BC = "S-S")
+Rcr_per_length = [minimum(result.curve[l][:, 2]) for l in eachindex(result.curve)]
+Lcrl = result.lengths[argmin(Rcr_per_length)]
+Rcrl = minimum(Rcr_per_length)
 
-println("cFSM  Lcrl = ", round(result.Lcr; digits=3), " in")
-println("cFSM  Rcrl = ", round(result.Rcr; digits=4), "  (load factor, P=1 reference)")
+println("cFSM  Lcrl = ", round(Lcrl; digits=3), " in")
+println("cFSM  Rcrl = ", round(Rcrl; digits=4), "  (load factor, P=1 reference)")

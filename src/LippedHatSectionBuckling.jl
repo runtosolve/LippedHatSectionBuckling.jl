@@ -302,8 +302,8 @@ as `sub_node_tol`. Pass this value to `cfsm_analysis` via the `sub_node_tol` key
 
 ```julia
 sec = get_cFSM_section_curved(dimensions, material, load)
-result = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths;
-                             modes=["L"], sub_node_tol=sec.sub_node_tol)
+result = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1,
+                             ["L"]; sub_node_tol=sec.sub_node_tol)
 ```
 
 # Arguments
@@ -1347,6 +1347,11 @@ end
 # cFSM convenience wrappers
 # ---------------------------------------------------------------------------
 
+function _cfsm_Lcr_Rcr(result)
+    Rcr_per_length = [minimum(result.curve[l][:, 2]) for l in eachindex(result.curve)]
+    return result.lengths[argmin(Rcr_per_length)], minimum(Rcr_per_length)
+end
+
 """
     calculate_Lcrl(dimensions, material) -> Float64
 
@@ -1388,8 +1393,9 @@ function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1408,8 +1414,9 @@ function calculate_Pcrℓ_cFSM(dimensions, material, lengths; n_per_segment::Int
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1444,8 +1451,9 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1464,8 +1472,9 @@ function calculate_Pcrd_cFSM(dimensions, material, lengths; n_per_segment::Int=4
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1501,8 +1510,9 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1521,8 +1531,9 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1555,8 +1566,9 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1575,8 +1587,9 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1612,8 +1625,9 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1632,8 +1646,9 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1666,8 +1681,9 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1686,8 +1702,9 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1723,8 +1740,9 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1743,8 +1761,9 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1778,8 +1797,9 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1798,8 +1818,9 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1835,8 +1856,9 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1855,8 +1877,9 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1890,8 +1913,9 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")
@@ -1910,8 +1934,9 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
-    results = Results(result, result.Lcr, result.Rcr)
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    Lcr, Rcr = _cfsm_Lcr_Rcr(result)
+    results = Results(result, Lcr, Rcr)
 
     if !(L_min < result.Lcr < L_max)
         println("Lcr is out of the range")

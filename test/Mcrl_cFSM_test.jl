@@ -37,11 +37,23 @@ cfsm_section = LippedHatSectionBuckling.get_cFSM_section(
 
 result_cfsm = cFSM.cfsm_analysis(
     cfsm_section.node, cfsm_section.elem, cfsm_section.prop,
-    lengths; modes=["L"], BC="S-S"
+    lengths, 1, ["L"]; BC="S-S"
 )
+Rcr_per_length = [minimum(result_cfsm.curve[l][:, 2]) for l in eachindex(result_cfsm.curve)]
+Lcrl_cfsm = result_cfsm.lengths[argmin(Rcr_per_length)]
+Rcrl_cfsm = minimum(Rcr_per_length)
 
-Lcrl_cfsm = result_cfsm.Lcr
-Rcrl_cfsm = result_cfsm.Rcr
+# ==========================================================================
+# CUFSM (unconstrained FSM), full signature curve
+# ==========================================================================
+coordinates = LippedHatSectionBuckling.get_section_coordinates(dimensions)
+model_cufsm = CUFSM.Tools.open_section_analysis(
+    coordinates.X, coordinates.Y, t, lengths, E, ν,
+    0.0, -1.0, 0.0, 0.0, 0.0, [], [], 1
+)
+Rcrl_curve_cufsm = CUFSM.Tools.get_load_factor(model_cufsm, 1)
+Lcrl_cufsm = lengths[argmin(Rcrl_curve_cufsm)]
+Rcrl_cufsm = minimum(Rcrl_curve_cufsm)
 
 # ==========================================================================
 # Comparison
