@@ -1397,7 +1397,7 @@ function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1418,7 +1418,7 @@ function calculate_Pcrℓ_cFSM(dimensions, material, lengths; n_per_segment::Int
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1455,7 +1455,7 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1476,7 +1476,7 @@ function calculate_Pcrd_cFSM(dimensions, material, lengths; n_per_segment::Int=4
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1514,7 +1514,7 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1535,7 +1535,7 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material, lengths; n_per_segme
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1570,7 +1570,7 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1591,7 +1591,7 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material, lengths; n_per_segment
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1629,7 +1629,7 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1650,7 +1650,7 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material, lengths; n_per_segme
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1685,7 +1685,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1706,7 +1706,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material, lengths; n_per_segment
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1744,7 +1744,7 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1765,7 +1765,7 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segme
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1801,7 +1801,7 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1822,7 +1822,7 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1860,7 +1860,7 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1881,7 +1881,7 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1917,7 +1917,7 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
@@ -1938,7 +1938,7 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
-    if !(L_min < result.Lcr < L_max)
+    if !(L_min < Lcr < L_max)
         println("Lcr is out of the range")
         return nothing
     end
