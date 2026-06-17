@@ -33,7 +33,7 @@ println("  D2 (return lip, right) = ", round(w.D2; digits=4))
 println()
 
 # ---- effective area -------------------------------------------------------
-ae = LippedHatSectionBuckling.calculate_Ae(dimensions, material, f, Fy)
+ae = LippedHatSectionBuckling.calculate_Ae(dimensions, material, f)
 
 println("Effective widths at f = ", f, " ksi:")
 println("  Element                  beff (in)   Fcrl (ksi)   lambda")

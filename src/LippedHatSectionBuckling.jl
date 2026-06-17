@@ -1275,7 +1275,7 @@ end
 
 
 """
-    calculate_Ae(dimensions, material, f, Fy) -> NamedTuple
+    calculate_Ae(dimensions, material, f) -> NamedTuple
 
 Compute the **effective area** `Ae` for the lipped hat section under uniform
 compressive stress `f`, per AISI S100-24.
@@ -1293,7 +1293,6 @@ The section has 6 × 90° corners (3 per side); each contributes area `(π/2)(r 
 - `dimensions` — `Dimensions` object
 - `material`   — `Material` object
 - `f`          — compressive stress in the elements (ksi), e.g. `Fn` from Chapter E
-- `Fy`         — yield stress (ksi); retained for API compatibility (not used internally)
 
 # Returns
 Named tuple with fields:
@@ -1305,7 +1304,7 @@ Named tuple with fields:
 - `lambda`    — slenderness per element
 - `sec13`     — Section 1.3 diagnostics for lips: `(S, Ia, Is, R1, k)` for L1 and L2
 """
-function calculate_Ae(dimensions, material, f, _Fy=nothing)
+function calculate_Ae(dimensions, material, f)
 
     (; t, r, D) = dimensions
     (; E, ν) = material
