@@ -1336,7 +1336,7 @@ function calculate_Ae(dimensions, material, f)
         L2 = (S=S_lip, Ia=r_L2.Ia, Is=r_L2.Is, R1=r_L2.R1, k=r_L2.k),
     )
 
-    return (Ae=Ae, A_corners=A_corners, widths=w, beff=beff, frcl=frcl, lambda=lambda, sec13=sec13)
+    return Ae
 
 end
 

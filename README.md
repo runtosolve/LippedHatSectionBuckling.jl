@@ -286,7 +286,7 @@ H_flat = (1.54 + 2 × 0.0219) - 2(0.1009) = 1.3820 in
 The function:
 
 ```julia
-ae = LippedHatSectionBuckling.calculate_Ae(dimensions, material, f, Fy)
+ae = LippedHatSectionBuckling.calculate_Ae(dimensions, material, f)
 ```
 
 returns a named tuple containing:
