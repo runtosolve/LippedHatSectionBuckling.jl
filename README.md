@@ -289,17 +289,7 @@ The function:
 ae = LippedHatSectionBuckling.calculate_Ae(dimensions, material, f)
 ```
 
-returns a named tuple containing:
-
-| Field          | Description                                             |
-| -------------- | ------------------------------------------------------- |
-| `ae.Ae`        | effective area including fully effective curved corners |
-| `ae.A_corners` | total fully effective curved corner area                |
-| `ae.widths`    | flat widths named tuple                                 |
-| `ae.beff`      | effective widths named tuple                            |
-| `ae.frcl`      | local buckling stress values                            |
-| `ae.lambda`    | slenderness values                                      |
-| `ae.sec13`     | Section 1.3 lip-stiffener calculation values            |
+returns Ae
 
 The effective-area calculation uses the following element classification:
 
