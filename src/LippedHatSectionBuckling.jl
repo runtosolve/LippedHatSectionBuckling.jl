@@ -302,8 +302,7 @@ as `sub_node_tol`. Pass this value to `cfsm_analysis` via the `sub_node_tol` key
 
 ```julia
 sec = get_cFSM_section_curved(dimensions, material, load)
-result = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1,
-                             ["L"]; sub_node_tol=sec.sub_node_tol)
+result = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"], sub_node_tol=sec.sub_node_tol)
 ```
 
 # Arguments
@@ -1347,8 +1346,7 @@ end
 # ---------------------------------------------------------------------------
 
 function _cfsm_Lcr_Rcr(result)
-    Rcr_per_length = [minimum(result.curve[l][:, 2]) for l in eachindex(result.curve)]
-    return result.lengths[argmin(Rcr_per_length)], minimum(Rcr_per_length)
+    return result.Lcr, result.Rcr
 end
 
 """
@@ -1392,7 +1390,7 @@ function calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1413,7 +1411,7 @@ function calculate_Pcrℓ_cFSM(dimensions, material, lengths; n_per_segment::Int
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1450,7 +1448,7 @@ function calculate_Pcrd_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1471,7 +1469,7 @@ function calculate_Pcrd_cFSM(dimensions, material, lengths; n_per_segment::Int=4
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1509,7 +1507,7 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1530,7 +1528,7 @@ function calculate_Mcrℓ_xx_pos_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1565,7 +1563,7 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1586,7 +1584,7 @@ function calculate_Mcrd_xx_pos_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1624,7 +1622,7 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1645,7 +1643,7 @@ function calculate_Mcrℓ_xx_neg_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1680,7 +1678,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1701,7 +1699,7 @@ function calculate_Mcrd_xx_neg_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1739,7 +1737,7 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1760,7 +1758,7 @@ function calculate_Mcrℓ_yy_pos_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1796,7 +1794,7 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1817,7 +1815,7 @@ function calculate_Mcrd_yy_pos_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1855,7 +1853,7 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1876,7 +1874,7 @@ function calculate_Mcrℓ_yy_neg_cFSM(dimensions, material, lengths; n_per_segme
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["L"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["L"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1912,7 +1910,7 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment::Int=4)
     lengths = exp.(range(log(L_min), log(L_max); length=60))
 
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -1933,7 +1931,7 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment
     L_min   = minimum(lengths)
     L_max   = maximum(lengths)
     sec     = get_cFSM_section(dimensions, material, load; n_per_segment)
-    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths, 1, ["D"])
+    result  = cFSM.cfsm_analysis(sec.node, sec.elem, sec.prop, lengths; modes=["D"])
     Lcr, Rcr = _cfsm_Lcr_Rcr(result)
     results = Results(result, Lcr, Rcr)
 
@@ -2029,7 +2027,7 @@ using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrℓ_xx_pos_cFSM`
 when Rcr lies at the boundary of the FSM search range.
 Returns a `Section` with `label = "Mcrℓ_xx_FSM_cFSM"`.
 """
-function calculate_Mcrℓ_xx_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+function calculate_Mcrℓ_xx_pos_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
 
     label = "Mcrℓ_xx_FSM_cFSM"
     load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
