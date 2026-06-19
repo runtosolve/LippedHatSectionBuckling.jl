@@ -498,7 +498,7 @@ function calculate_Pcrℓ(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -525,7 +525,7 @@ function calculate_Pcrℓ(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -551,7 +551,7 @@ function calculate_Pcrℓ(dimensions, coordinates, material, lengths)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -583,7 +583,7 @@ function calculate_Pcrd(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -610,7 +610,7 @@ function calculate_Pcrd(dimensions, coordinates, material, lengths)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -641,7 +641,7 @@ function calculate_Mcrd_xx(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -661,7 +661,7 @@ function calculate_Mcrd_xx(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -681,7 +681,7 @@ function calculate_Mcrd_xx(dimensions, coordinates, material, lengths)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -717,7 +717,7 @@ function calculate_Mcrℓ_xx(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -744,7 +744,7 @@ function calculate_Mcrℓ_xx(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -772,7 +772,7 @@ function calculate_Mcrℓ_xx(dimensions, coordinates, material, lengths)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -803,7 +803,7 @@ function calculate_Mcrd_yy_pos(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -825,7 +825,7 @@ function calculate_Mcrd_yy_pos(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -865,13 +865,13 @@ function calculate_Mcrℓ_yy_pos(dimensions, material)
     #     lengths = range(0.25 * H, 1.25 * H, 9)
     # end
 
-    # coordinates = get_section_coordinates(dimensions)
+    coordinates = get_section_coordinates(dimensions)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
-    return section 
+    return section
 
 end
 
@@ -910,7 +910,7 @@ function calculate_Mcrℓ_yy_pos(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -953,7 +953,7 @@ function calculate_Mcrℓ_yy_neg(dimensions, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -985,7 +985,7 @@ function calculate_Mcrℓ_yy_neg(dimensions, coordinates, material)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section
 
@@ -1015,7 +1015,7 @@ function calculate_Mcrℓ_yy_neg(dimensions, coordinates, material, lengths)
 
     results = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
 
-    section = Section(label, material, dimensions, load, results)
+    section = Section(label, material, dimensions, lengths, load, results)
 
     return section 
 
@@ -1946,6 +1946,331 @@ function calculate_Mcrd_yy_neg_cFSM(dimensions, material, lengths; n_per_segment
 
 end
 
+
+
+# ---------------------------------------------------------------------------
+# FSM_cFSM hybrid functions
+# Strategy: run FSM over a finite length range first.  If the minimum Rcr
+# falls strictly inside [L_min, L_max] the FSM result is returned directly.
+# If the minimum sits on the lower or upper boundary of the range the search
+# window is not reliable, so the corresponding cFSM constrained analysis is
+# called instead to obtain Pcr/Mcr and Lcr.
+# ---------------------------------------------------------------------------
+
+"""
+    calculate_Pcrℓ_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the local buckling load factor under uniform axial compression (`P = 1`)
+using the FSM/cFSM hybrid strategy. The FSM result is used when the minimum Rcr
+falls strictly inside the search length range; the cFSM constrained analysis
+(`calculate_Pcrℓ_cFSM`) is called when the minimum lies at a range boundary.
+Returns a `Section` with `label = "Pcrℓ_FSM_cFSM"`.
+"""
+function calculate_Pcrℓ_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Pcrℓ_FSM_cFSM"
+    load  = Load(1.0, 0.0, 0.0, 0.0, 0.0)
+
+    B = dimensions.B
+    H = dimensions.H
+    lengths = range(0.25*maximum([B, H]), 2.0*maximum([B, H]), 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Pcrℓ_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Pcrd_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the distortional buckling load factor under uniform axial compression (`P = 1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Pcrd_cFSM` when Rcr
+lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Pcrd_FSM_cFSM"`.
+"""
+function calculate_Pcrd_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Pcrd_FSM_cFSM"
+    load  = Load(1.0, 0.0, 0.0, 0.0, 0.0)
+
+    Lcrd  = calculate_Lcrd(dimensions, material, "P")
+    lengths = range(Lcrd, 2.0*Lcrd, 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Pcrd_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrℓ_xx_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the local buckling moment factor for strong-axis bending (`Mxx = 1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrℓ_xx_pos_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrℓ_xx_FSM_cFSM"`.
+"""
+function calculate_Mcrℓ_xx_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrℓ_xx_FSM_cFSM"
+    load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
+
+    B = dimensions.B
+    H = dimensions.H
+    lengths = range(0.25*maximum([B, H]), 2.0*maximum([B, H]), 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrℓ_xx_pos_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrd_xx_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the distortional buckling moment factor for strong-axis bending (`Mxx = 1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrd_xx_pos_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrd_xx_FSM_cFSM"`.
+"""
+function calculate_Mcrd_xx_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrd_xx_FSM_cFSM"
+    load  = Load(0.0, 1.0, 0.0, 0.0, 0.0)
+
+    Lcrd  = calculate_Lcrd(dimensions, material, "M")
+    lengths = range(Lcrd, 2.0*Lcrd, 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrd_xx_pos_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrℓ_xx_neg_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the local buckling moment factor for negative strong-axis bending (`Mxx = -1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrℓ_xx_neg_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrℓ_xx_neg_FSM_cFSM"`.
+"""
+function calculate_Mcrℓ_xx_neg_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrℓ_xx_neg_FSM_cFSM"
+    load  = Load(0.0, -1.0, 0.0, 0.0, 0.0)
+
+    B = dimensions.B
+    H = dimensions.H
+    lengths = range(0.25*maximum([B, H]), 2.0*maximum([B, H]), 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrℓ_xx_neg_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrd_xx_neg_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the distortional buckling moment factor for negative strong-axis bending (`Mxx = -1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrd_xx_neg_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrd_xx_neg_FSM_cFSM"`.
+"""
+function calculate_Mcrd_xx_neg_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrd_xx_neg_FSM_cFSM"
+    load  = Load(0.0, -1.0, 0.0, 0.0, 0.0)
+
+    Lcrd  = calculate_Lcrd(dimensions, material, "M")
+    lengths = range(Lcrd, 2.0*Lcrd, 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrd_xx_neg_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrℓ_yy_pos_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the local buckling moment factor for positive weak-axis bending (`Mzz = +1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrℓ_yy_pos_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrℓ_yy_pos_FSM_cFSM"`.
+"""
+function calculate_Mcrℓ_yy_pos_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrℓ_yy_pos_FSM_cFSM"
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
+
+    B = dimensions.B
+    H = dimensions.H
+    lengths = range(0.25*maximum([B, H]), 2.0*maximum([B, H]), 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrℓ_yy_pos_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrd_yy_pos_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the distortional buckling moment factor for positive weak-axis bending (`Mzz = +1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrd_yy_pos_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrd_yy_pos_FSM_cFSM"`.
+"""
+function calculate_Mcrd_yy_pos_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrd_yy_pos_FSM_cFSM"
+    load  = Load(0.0, 0.0, 1.0, 0.0, 0.0)
+
+    Lcrd  = calculate_Lcrd(dimensions, material, "M")
+    lengths = range(Lcrd, 2.0*Lcrd, 9)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrd_yy_pos_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrℓ_yy_neg_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the local buckling moment factor for negative weak-axis bending (`Mzz = -1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrℓ_yy_neg_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrℓ_yy_neg_FSM_cFSM"`.
+"""
+function calculate_Mcrℓ_yy_neg_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrℓ_yy_neg_FSM_cFSM"
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+
+    B = dimensions.B
+    H = dimensions.H
+    lengths = range(0.5*maximum([B, H]), 2.0*maximum([B, H]), 9)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrℓ_yy_neg_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
+
+
+"""
+    calculate_Mcrd_yy_neg_FSM_cFSM(dimensions, material; n_per_segment=4) -> Section
+
+Compute the distortional buckling moment factor for negative weak-axis bending (`Mzz = -1`)
+using the FSM/cFSM hybrid strategy. Falls back to `calculate_Mcrd_yy_neg_cFSM`
+when Rcr lies at the boundary of the FSM search range.
+Returns a `Section` with `label = "Mcrd_yy_neg_FSM_cFSM"`.
+"""
+function calculate_Mcrd_yy_neg_FSM_cFSM(dimensions, material; n_per_segment::Int=4)
+
+    label = "Mcrd_yy_neg_FSM_cFSM"
+    load  = Load(0.0, 0.0, -1.0, 0.0, 0.0)
+
+    Lcrd  = calculate_Lcrd(dimensions, material, "M")
+    lengths = range(Lcrd, 2.0*Lcrd, 20)
+    L_min = first(lengths)
+    L_max = last(lengths)
+
+    coordinates = get_section_coordinates(dimensions)
+    results_fsm = calculate_buckling_properties(coordinates, dimensions, load, material, lengths)
+
+    if L_min < results_fsm.Lcr < L_max
+        return Section(label, material, dimensions, collect(lengths), load, results_fsm)
+    else
+        sec = calculate_Mcrd_yy_neg_cFSM(dimensions, material; n_per_segment)
+        return Section(label, material, dimensions, sec.lengths, load, sec.results)
+    end
+
+end
 
 
 end # module LippedHatSectionBuckling
